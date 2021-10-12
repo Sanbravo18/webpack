@@ -1,25 +1,17 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
   entry: "./src/index.js",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
-    publicPath: "/",
   },
   resolve: {
     extensions: [".js", ".jsx"],
-    alias: {
-      "@components": path.resolve(__dirname, "src/components/"),
-      "@styles": path.resolve(__dirname, "src/styles/"),
-    },
   },
-  mode: "production",
+  mode: 'development',
   module: {
     rules: [
       {
@@ -34,9 +26,9 @@ module.exports = {
         use: [{ loader: "html-loader" }],
       },
       {
-        test: /\.s[ac]ss$/,
+        test: /\.s[ac]ss$/, 
         use: [
-          "style-loader", //MiniCssExtractPlugin.loader, //Puede sustituir 'style-loader'
+           "style-loader", //MiniCssExtractPlugin.loader, //Puede sustituir 'style-loader'
           "css-loader",
           "sass-loader",
         ],
@@ -50,12 +42,18 @@ module.exports = {
       filename: "./index.html",
     }),
     new MiniCssExtractPlugin({
-      filename: "[name].css",
-    }),
-    new CleanWebpackPlugin(),
+        filename: '[name].css'
+    })
   ],
-  optimization: {
-    minimize: true,
-    minimizer: [new CssMinimizerPlugin(), new TerserPlugin()],
+  devServer: {
+    static: {
+      directory: path.join(__dirname, "dist"),
+      watch: true,
+    },
+    watchFiles: path.join(__dirname, "./**"), //observa los cambios en todos nuestros archivos y actualiza el navegador
+    compress: true,
+    historyApiFallback: true,
+    port: 3006,
+    open: true, //Hace que se abra en el navegador
   },
 };
